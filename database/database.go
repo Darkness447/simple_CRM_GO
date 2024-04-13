@@ -1,19 +1,27 @@
-package main
+package database
 
 import (
 	"fmt"
+	"simple_crm_go/lead"
 
-	"github.com/gofiber/fiber/v2"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func setupRoutes(app *fiber.App) {
-	app.Get(GetLeads)
-	app.Post(NewLeads)
-	app.Delete(DeleteLeads)
-}
+// capital is important
+var DbConn *gorm.DB
 
-func main() {
-	fmt.Println("main server file....")
-	app := fiber.New()
-	setupRoutes(app)
+func Initialize() {
+	dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
+	var err error
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err == nil {
+		panic(err)
+	}
+
+	fmt.Println("Connection to a database")
+	db.AutoMigrate(&lead.Lead{})
+
+	DbConn = db
 }
